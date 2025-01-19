@@ -73,8 +73,37 @@ public class ApiV1MemberControllerTest {
 	}
 
 	@Test
-	@DisplayName("로그인")
+	@DisplayName("회원가입 시 이미 사용중인 username, 409")
 	void t2() throws Exception {
+		ResultActions resultActions = mvc
+				.perform(
+						post("/api/v1/members/join")
+								.content("""
+										{
+										    "username": "user1",
+										    "password": "1234",
+										    "nickname": "무명"
+										}
+										""".stripIndent())
+								.contentType(
+										new MediaType(MediaType.APPLICATION_JSON, StandardCharsets.UTF_8)
+								)
+				)
+				.andDo(print());
+
+		resultActions
+				.andExpect(handler().handlerType(ApiV1MemberController.class)) //클래스
+				.andExpect(handler().methodName("join")) //메소드
+				.andExpect(status().isConflict()) //상태
+				.andExpect(jsonPath("$.resultCode").value("409-1")) //상태코드
+				.andExpect(jsonPath("$.msg").value("해당 username은 이미 사용중입니다."));
+
+	}
+
+
+	@Test
+	@DisplayName("로그인")
+	void t3() throws Exception {
 		ResultActions resultActions = mvc
 				.perform(
 						post("/api/v1/members/login")
