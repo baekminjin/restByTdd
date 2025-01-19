@@ -27,11 +27,15 @@ public class Member extends BaseTime {
 
     public String getName() {
 
-        return this.nickname;
+        return nickname;
     }
 
     public boolean isAdmin() {
         return "admin".equals(username);
+    }
+
+    public boolean matchPassword(String password) {
+        return this.password.equals(password);
     }
 }
 
